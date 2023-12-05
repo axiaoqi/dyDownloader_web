@@ -68,8 +68,23 @@ class DownloadDouyinVideo(object):
         # 重定向下载链接
         file_url = self.redirect(_file_url)
 
+        # 获取点赞，评论，收藏，分享数量
+        # digg_count：点赞
+        # comment_count：评论
+        # collect_count：收藏
+        # share_count：分享
+        statistics = data['statistics']
+        file_status = f"赞{statistics['digg_count']}_评{statistics['comment_count']}_藏{statistics['collect_count']}_享{statistics['share_count']}"
+
         # 文件名
-        file_name = f'{author}_{create_time}_{desc}.mp4'
+        file_name = f'{author}_{create_time}_{file_status}_{desc}.mp4'
+        # 文件标题过长，缩减到255字节长度
+        file_name_len = len(file_name.encode())
+        # 判断标题字节数
+        if file_name_len > 255:
+            cut_file_name_bytes = file_name.encode('utf-8')
+            cut_file_name_tmp = cut_file_name_bytes[:251]
+            file_name = cut_file_name_tmp.decode('utf-8') + '.mp4'
 
         return file_name, file_url
 
@@ -79,3 +94,10 @@ class DownloadDouyinVideo(object):
         download_video(url=file_url, name=file_name)
 
         return file_name
+
+
+if __name__ == '__main__':
+    url = input("请输入抖音链接或者分享口令:")
+    dyDownloader = DownloadDouyinVideo(url)
+    file_name = dyDownloader.download()
+
