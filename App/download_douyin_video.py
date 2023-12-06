@@ -7,6 +7,28 @@ from tqdm import tqdm
 from datetime import datetime
 
 
+def file_name_less_255(file_name):
+    # 判断标题字节数
+    max_bytes_num = 255
+    i = 0
+    mp4_num = 4
+
+    # 文件标题过长，缩减到255字节长度
+    if len(file_name.encode()) > max_bytes_num:
+        cut_file_name_bytes = file_name.encode('utf-8')
+        while True:
+            try:
+                cut_file_name_tmp = cut_file_name_bytes[:max_bytes_num-mp4_num-i]
+                file_name = cut_file_name_tmp.decode('utf-8') + '.mp4'
+                break
+            except Exception as e:
+                print("文件名过长，正在重试...%s", e)
+            i += 1
+
+    return file_name
+
+
+
 def download_video(url, name):
     response = requests.get(url, stream=True)
     if not os.path.exists(name):
@@ -78,13 +100,9 @@ class DownloadDouyinVideo(object):
 
         # 文件名
         file_name = f'{author}_{create_time}_{file_status}_{desc}.mp4'
-        # 文件标题过长，缩减到255字节长度
-        file_name_len = len(file_name.encode())
-        # 判断标题字节数
-        if file_name_len > 255:
-            cut_file_name_bytes = file_name.encode('utf-8')
-            cut_file_name_tmp = cut_file_name_bytes[:251]
-            file_name = cut_file_name_tmp.decode('utf-8') + '.mp4'
+
+        # 文件名超过255字节处理
+        file_name = file_name_less_255(file_name)
 
         return file_name, file_url
 
