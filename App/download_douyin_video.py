@@ -77,7 +77,7 @@ class DownloadDouyinVideo(object):
         response = requests.get(url=json_url, headers=self.headers)
         data = json.loads(response.text)['item_list'][0]
 
-        desc = data['desc']  # 描述
+        desc = data['desc'].replace('\n', '')  # 描述
         create_time = datetime.fromtimestamp(data['create_time']).strftime('%Y-%m-%d')  # 发布时间,这里取日期
         author = data['author']['nickname']  # 作者
 
