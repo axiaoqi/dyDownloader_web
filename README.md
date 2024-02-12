@@ -5,7 +5,7 @@
 `pip install -r requirements.txt`
 
 ## 下载dyDownloader_web
-`git clome https://github.com/axiaoqi/dyDownloader_web.git`
+`git clone https://github.com/axiaoqi/dyDownloader_web.git`
 
 ## 运行程序
 `python app.py`
