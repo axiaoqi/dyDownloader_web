@@ -12,3 +12,5 @@ tqdm==4.66.1
 urllib3==2.0.7
 Werkzeug==2.2.2
 zipp==3.17.0
+jsonpath
+DrissionPage
