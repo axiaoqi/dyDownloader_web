@@ -188,6 +188,7 @@ def parse_api_url_json_data(data):
     download_url = jsonpath(resp_json, '$..play_addr_h264.url_list')[0][2]
     author_name = jsonpath(resp_json, '$..nickname')[0]
     title = jsonpath(resp_json, '$..caption')[0]
+    desc = jsonpath(resp_json, '$..desc')[0]
     seo_info = jsonpath(resp_json, '$..seo_info.ocr_content')[0]
 
     # 作品数据
@@ -197,21 +198,27 @@ def parse_api_url_json_data(data):
     zhuanfa = jsonpath(resp_json, '$..share_count')[0]
     douzaisou = jsonpath(resp_json, '$..word')[0]
 
-    desc = (f'作者：{author_name}\n'
+    s = (f'作者：{author_name}\n'
             f'作品名称：{title}\n'
             f'点赞：{dianzan}，收藏：{shoucang}，评论：{pinglun}，转发：{zhuanfa}\n'
             f'大家都在搜：{douzaisou}\n'
             f'SEO信息：{seo_info}\n'
             )
-    mp4_file_path = Path(Path.home() / 'Desktop' / f'{title}.mp4')
+    if len(title) > 0:
+        mp4_file_path = Path(Path.home() / 'Desktop' / f'{title}.mp4')
+    elif len(title) == 0 & len(desc) > 0:
+        mp4_file_path = Path(Path.home() / 'Desktop' / f'{desc}.mp4')
+    else:
+        mp4_file_path = Path(Path.home() / 'Desktop' / f'{download_url[-20:]}.mp4')
+
     mp4_file_path = file_name_less_255(str(mp4_file_path))
 
     txt_file_path = Path(Path.home() / 'Desktop' / f'{title}.txt')
     print(f'正在下载：{mp4_file_path}')
     download_video(download_url, mp4_file_path)
     with open(txt_file_path, 'w') as f:
-        f.write(desc)
-    return desc, mp4_file_path
+        f.write(s)
+    return s, mp4_file_path
 
 
 def download_file(url):
