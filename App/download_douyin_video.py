@@ -128,11 +128,11 @@ def get_item_real_url(url):
 def get_api_url(url):
     url = get_item_real_url(url)
     co = ChromiumOptions()
-    co.headless()
+    # co.headless()
     # 打开浏览器
     dp = ChromiumPage(co)
     # 监听数据包
-    dp.listen.start('aweme/v1/web/aweme/detail/')
+    dp.listen.start('aweme/detail/?')  # 这个api接口会变化
     # 访问网站
     dp.get(url)
     # 等待数据包加载
@@ -185,11 +185,14 @@ def parse_api_url_json_data(data):
 
     resp_json = data
 
-    download_url = jsonpath(resp_json, '$..play_addr_h264.url_list')[0][2]
+    print(data)
+    print(len(data))
+
+    download_url = jsonpath(resp_json, '$..play_addr.url_list')[0][2]
     author_name = jsonpath(resp_json, '$..nickname')[0]
     title = jsonpath(resp_json, '$..caption')[0]
     desc = jsonpath(resp_json, '$..desc')[0]
-    seo_info = jsonpath(resp_json, '$..seo_info.ocr_content')[0]
+    # seo_info = jsonpath(resp_json, '$..seo_info.ocr_content')[0]
 
     # 作品数据
     dianzan = jsonpath(resp_json, '$..digg_count')[0]
@@ -202,7 +205,7 @@ def parse_api_url_json_data(data):
             f'作品名称：{title}\n'
             f'点赞：{dianzan}，收藏：{shoucang}，评论：{pinglun}，转发：{zhuanfa}\n'
             f'大家都在搜：{douzaisou}\n'
-            f'SEO信息：{seo_info}\n'
+            # f'SEO信息：{seo_info}\n'
             )
     if len(title) > 0:
         mp4_file_path = Path(Path.home() / 'Desktop' / f'{title}.mp4')
